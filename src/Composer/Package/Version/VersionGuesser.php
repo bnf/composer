@@ -163,6 +163,18 @@ class VersionGuesser
             }
         }
 
+        if (0 === $this->process->execute('git tag --list --points-at HEAD', $output, $path)) {
+            $tags = explode("\n", $output);
+            foreach ($tags as $tag) {
+                try {
+                    $version = $this->versionParser->normalize(trim($tag));
+
+                    return array('version' => $version, 'pretty_version' => trim($tag));
+                } catch (\Exception $e) {
+                }
+            }
+        }
+
         return null;
     }
 
